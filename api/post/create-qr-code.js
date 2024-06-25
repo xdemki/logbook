@@ -3,6 +3,7 @@ const { findTeacher } = require("../../utils/findTeacher");
 const router = require("express").Router();
 const qrcode = require("qrcode");
 const Codes = require("../../database/models/codes");
+const hat = require('hat')
 
 router.post("/create-qr-code/:teacher/:Class/:period", async (req, res) => {
   const { teacher, Class, period } = req.params;
@@ -29,7 +30,9 @@ router.post("/create-qr-code/:teacher/:Class/:period", async (req, res) => {
     return response;
   }
 
-  const QR = await qrcode.toDataURL(String(req.params));
+  const identifier = hat();
+
+  const QR = await qrcode.toDataURL(`${process.env.url}/code/${identifier}`);
 
   const code = await Codes.create({
     period,
@@ -39,9 +42,12 @@ router.post("/create-qr-code/:teacher/:Class/:period", async (req, res) => {
     expired: false,
     code: QR,
     date: new Date().getTime(),
+    identifier
   });
 
-  res.send({ code });
+  res.send(
+    `<img src=${QR}/>`
+  );
 });
 
 module.exports = router;

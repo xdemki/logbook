@@ -37,5 +37,10 @@ module.exports = mongoose.model('Codes', new mongoose.Schema({
         type: mongoose.SchemaTypes.String,
         required: true,
         unique: false
+    },
+    identifier: {
+        type: mongoose.SchemaTypes.String,
+        required: true,
+        unique: true
     }
 }));
